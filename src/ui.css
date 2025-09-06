@@ -76,30 +76,6 @@
     color: #d6d6d6;
 }
 
-.common {
-    color: #d2d0cf;
-}
-
-.unique {
-    color: #fff941;
-}
-
-.rare {
-    color: #ec4fff;
-}
-
-.legendary {
-    color: #73e3ff;
-}
-
-.fabled {
-    color: #ff3333;
-}
-
-.mythic {
-    color: #bc00ff;
-}
-
 .newline {
     height: 0.3rem;
 }
@@ -107,14 +83,9 @@
 .stamina {
     color: #00fd7f;
 }
-.stamina-1 {
-    color: #f2f531;
-}
-.stamina-2 {
-    color: #ff9e03;
-}
-.stamina-3 {
-    color: #f73a24;
+
+.staminaregen {
+    color: #29f0a7;
 }
 
 input[type="checkbox"] {
