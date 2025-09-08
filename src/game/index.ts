@@ -22,22 +22,11 @@ export function initializeGame(): GameState {
           meleedmg: 0,
           rangeddmg: 0,
           elementaldmg: 0,
-          strength: 0,
-          earthdmg: 0,
-          earthdef: 0,
-          dexterity: 0,
-          thunderdmg: 0,
-          thunderdef: 0,
-          intelligence: 0,
-          waterdmg: 0,
-          waterdef: 0,
-          defence: 0,
-          firedmg: 0,
-          firedef: 0,
-          agility: 0,
-          airdmg: 0,
-          airdef: 0,
-        }
+          elements: [0,0,0,0,0],
+          elementsdmg: [0,0,0,0,0],
+          elementsdef: [0,0,0,0,0],
+        },
+        inventory: [],
       },
       {
         name: "Player2",
@@ -54,22 +43,11 @@ export function initializeGame(): GameState {
           meleedmg: 0,
           rangeddmg: 0,
           elementaldmg: 0,
-          strength: 0,
-          earthdmg: 0,
-          earthdef: 0,
-          dexterity: 0,
-          thunderdmg: 0,
-          thunderdef: 0,
-          intelligence: 0,
-          waterdmg: 0,
-          waterdef: 0,
-          defence: 0,
-          firedmg: 0,
-          firedef: 0,
-          agility: 0,
-          airdmg: 0,
-          airdef: 0,
-        }
+          elements: [0,0,0,0,0],
+          elementsdmg: [0,0,0,0,0],
+          elementsdef: [0,0,0,0,0],
+        },
+        inventory: [],
       },
       {
         name: "Player3",
@@ -86,22 +64,11 @@ export function initializeGame(): GameState {
           meleedmg: 0,
           rangeddmg: 0,
           elementaldmg: 0,
-          strength: 0,
-          earthdmg: 0,
-          earthdef: 0,
-          dexterity: 0,
-          thunderdmg: 0,
-          thunderdef: 0,
-          intelligence: 0,
-          waterdmg: 0,
-          waterdef: 0,
-          defence: 0,
-          firedmg: 0,
-          firedef: 0,
-          agility: 0,
-          airdmg: 0,
-          airdef: 0,
-        }
+          elements: [0,0,0,0,0],
+          elementsdmg: [0,0,0,0,0],
+          elementsdef: [0,0,0,0,0],
+        },
+        inventory: [],
       },
     ],
   };
@@ -109,10 +76,16 @@ export function initializeGame(): GameState {
 
 export interface Player {
   name: string;
-  ap: 0,
-  level: 0,
-  xp: 0,
+  ap: 0;
+  level: 0;
+  xp: 0;
   stats: PlayerStats;
+  inventory: Item[];
+}
+
+export interface Item {
+  name: string;
+  modifiers: Modifier[];
 }
 
 export interface Modifier {
@@ -140,35 +113,11 @@ export interface PlayerStats {
 
   elementaldmg: number;
 
-  strength: number;
+  elements: [number,number,number,number,number];
 
-  earthdmg: number;
+  elementsdmg: [number,number,number,number,number];
 
-  earthdef: number;
-
-  dexterity: number;
-
-  thunderdmg: number;
-
-  thunderdef: number;
-
-  intelligence: number;
-
-  waterdmg: number;
-
-  waterdef: number;
-
-  defence: number;
-
-  firedmg: number;
-
-  firedef: number;
-
-  agility: number;
-
-  airdmg: number;
-
-  airdef: number;
+  elementsdef: [number,number,number,number,number];
 }
 
 export const GameContext: Context<GameState> = React.createContext(null as any);
