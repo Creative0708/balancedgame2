@@ -1,0 +1,27 @@
+.admin-panel {
+    margin-top: 4rem;
+    > h1:first-child {
+        margin-block: 0.5rem 1rem;
+    }
+
+    background: #fff1;
+    border: 1px solid #fff3;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+}
+select {
+    font: inherit;
+    background: #fff2;
+    margin-inline: 0.5rem;
+    padding-block: 0.2rem;
+    border: none;
+    color: inherit;
+
+    > option {
+        background: #222;
+    }
+}
+
+.number-button {
+    color: red;
+}

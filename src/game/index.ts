@@ -5,80 +5,46 @@ export interface GameState {
 }
 
 export function initializeGame(): GameState {
+  function makeDummyPlayer(name: string, ap = 0): Player {
+    return {
+      name,
+      ap,
+
+      level: 0,
+      xp: 0,
+      stats: {
+        hp: 100,
+        hpregen: 5,
+        mana: 100,
+        manaregen: 1,
+        stamina: 100,
+        staminaregen: 5,
+        meleedmg: 0,
+        rangeddmg: 0,
+        elementaldmg: 0,
+
+        elements: { earth: 0, thunder: 0, water: 0, fire: 0, air: 0 },
+        elementsdmg: { earth: 0, thunder: 0, water: 0, fire: 0, air: 0 },
+        elementsdef: { earth: 0, thunder: 0, water: 0, fire: 0, air: 0 },
+      },
+      inventory: [],
+    };
+  }
+
+  const player1 = makeDummyPlayer("Player 1", 30);
+  const player2 = makeDummyPlayer("Player 2", 20);
+  const player3 = makeDummyPlayer("Player 3");
+
   return {
-    players: [
-      {
-        name: "Player1",
-        ap: 0,
-        level: 0,
-        xp: 0,
-        stats: {
-          hp: 100,
-          hpregen: 5,
-          mana: 100,
-          manaregen: 1,
-          stamina: 100,
-          staminaregen: 5,
-          meleedmg: 0,
-          rangeddmg: 0,
-          elementaldmg: 0,
-          elements: [0,0,0,0,0],
-          elementsdmg: [0,0,0,0,0],
-          elementsdef: [0,0,0,0,0],
-        },
-        inventory: [],
-      },
-      {
-        name: "Player2",
-        ap: 0,
-        level: 0,
-        xp: 0,
-        stats: {
-          hp: 100,
-          hpregen: 5,
-          mana: 100,
-          manaregen: 1,
-          stamina: 100,
-          staminaregen: 5,
-          meleedmg: 0,
-          rangeddmg: 0,
-          elementaldmg: 0,
-          elements: [0,0,0,0,0],
-          elementsdmg: [0,0,0,0,0],
-          elementsdef: [0,0,0,0,0],
-        },
-        inventory: [],
-      },
-      {
-        name: "Player3",
-        ap: 0,
-        level: 0,
-        xp: 0,
-        stats: {
-          hp: 100,
-          hpregen: 5,
-          mana: 100,
-          manaregen: 1,
-          stamina: 100,
-          staminaregen: 5,
-          meleedmg: 0,
-          rangeddmg: 0,
-          elementaldmg: 0,
-          elements: [0,0,0,0,0],
-          elementsdmg: [0,0,0,0,0],
-          elementsdef: [0,0,0,0,0],
-        },
-        inventory: [],
-      },
-    ],
+    players: [player1, player2, player3],
   };
 }
 
 export interface Player {
   name: string;
-  ap: 0;
-  level: 0;
-  xp: 0;
+  ap: number;
+  level: number;
+  xp: number;
   stats: PlayerStats;
   inventory: Item[];
 }
@@ -93,6 +59,15 @@ export interface Modifier {
   type: "percentage" | "flat";
   value: number;
 }
+
+export interface ElementMap<Value> {
+  earth: Value;
+  thunder: Value;
+  water: Value;
+  fire: Value;
+  air: Value;
+}
+export type Element = keyof ElementMap<unknown>;
 
 export interface PlayerStats {
   hp: number;
@@ -113,11 +88,13 @@ export interface PlayerStats {
 
   elementaldmg: number;
 
-  elements: [number,number,number,number,number];
+  elements: ElementMap<number>;
 
-  elementsdmg: [number,number,number,number,number];
+  elementsdmg: ElementMap<number>;
 
-  elementsdef: [number,number,number,number,number];
+  elementsdef: ElementMap<number>;
 }
 
-export const GameContext: Context<GameState> = React.createContext(null as any);
+export const GameContext = React.createContext<GameState & { update(): void }>(
+  null as any,
+);

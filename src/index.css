@@ -11,5 +11,7 @@ body {
 
 body {
     padding: 8rem;
-    color: white;
+
+    font: 1rem "Ubuntu";
+    color: #eee;
 }
