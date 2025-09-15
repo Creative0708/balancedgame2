@@ -5,18 +5,22 @@ export default function NumberButton({
   min,
   max,
   defaultValue,
+  baseValue,
+  css,
 
   onChange,
 }: {
   min?: number;
   max?: number;
   defaultValue?: number;
+  baseValue: number;
+  css: string;
 
   onChange(val: number): void;
 }) {
   const [value, setValue] = useState(defaultValue ?? 0);
 
-  useEffect(() => onChange(defaultValue), []);
+  useEffect(() => onChange(0), []);
 
   function onClick(e: MouseEvent) {
     e.preventDefault();
@@ -25,7 +29,7 @@ export default function NumberButton({
     if (e.shiftKey) change *= 5;
 
     let newValue = value + change;
-    if (newValue < min) newValue = min;
+    if (newValue+baseValue < min) newValue = min-baseValue;
     if (newValue > max) newValue = max;
 
     setValue(newValue);
@@ -33,8 +37,8 @@ export default function NumberButton({
   }
 
   return (
-    <button onClick={onClick} onContextMenu={onClick} className="number-button">
-      {value}
+    <button onClick={onClick} onContextMenu={onClick} className={css}>
+      {baseValue+value}
     </button>
   );
 }

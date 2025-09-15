@@ -10,8 +10,10 @@ export function initializeGame(): GameState {
       name,
       ap,
 
-      level: 0,
-      xp: 0,
+      combatlevel: 0,
+      combatxp: 0,
+      resourcelevel: 0,
+      resourcexp: 0,
       stats: {
         hp: 100,
         hpregen: 5,
@@ -19,15 +21,25 @@ export function initializeGame(): GameState {
         manaregen: 1,
         stamina: 100,
         staminaregen: 5,
+        gatheringspeed: 1,
         meleedmg: 0,
         rangeddmg: 0,
         elementaldmg: 0,
-
+        neutraldmg: 0,
         elements: { earth: 0, thunder: 0, water: 0, fire: 0, air: 0 },
         elementsdmg: { earth: 0, thunder: 0, water: 0, fire: 0, air: 0 },
         elementsdef: { earth: 0, thunder: 0, water: 0, fire: 0, air: 0 },
       },
-      inventory: [],
+      inventory: [
+        {
+          name: "Basic Sword",
+          type: "weapon",
+          modifiers: [
+            { stat: "neutraldmg", type: "flat", value: 1 },
+          ],
+        },
+      ],
+      spells: [],
     };
   }
 
@@ -43,14 +55,18 @@ export function initializeGame(): GameState {
 export interface Player {
   name: string;
   ap: number;
-  level: number;
-  xp: number;
+  combatlevel: number;
+  combatxp: number;
+  resourcelevel: number;
+  resourcexp: number;
   stats: PlayerStats;
   inventory: Item[];
+  spells: Spell[];
 }
 
 export interface Item {
   name: string;
+  type: string;
   modifiers: Modifier[];
 }
 
@@ -82,17 +98,31 @@ export interface PlayerStats {
 
   staminaregen: number;
 
+  gatheringspeed: number;
+
   meleedmg: number;
 
   rangeddmg: number;
 
   elementaldmg: number;
 
+  neutraldmg: number;
+
   elements: ElementMap<number>;
 
   elementsdmg: ElementMap<number>;
 
   elementsdef: ElementMap<number>;
+}
+
+export interface ItemStats {
+  durability: number;
+
+  modifiers: Modifier[];
+}
+
+export interface Spell {
+  elementsdmg: ElementMap<number>;
 }
 
 export const GameContext = React.createContext<GameState & { update(): void }>(

@@ -15,3 +15,16 @@ body {
     font: 1rem "Ubuntu";
     color: #eee;
 }
+
+button {
+    background-color: #9c4df7;
+    padding: 15px 32px;
+    transition-duration: 0.4s;
+    border: 2px solid #8a29f8;
+    margin: 4px 2px;
+    font: 1rem "Ubuntu";
+}
+
+button:hover {
+    background-color: #ab67f8;
+}
