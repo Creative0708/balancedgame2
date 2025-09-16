@@ -1,5 +1,5 @@
 .admin-panel {
-    margin-top: 4rem;
+    margin-block: 4rem;
     > h1:first-child {
         margin-block: 0.5rem 1rem;
     }

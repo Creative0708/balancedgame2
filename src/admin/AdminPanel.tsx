@@ -1,6 +1,6 @@
 import { createContext, useContext, useRef, useState } from "react";
 import "./admin.css";
-import { GameContext, getModifiedStat, type GameState, type Item, type Player } from "../game";
+import { ALL_ELEMENTS, type ElementMap, GameContext, getModifiedStat, type GameState, type Item, type Player } from "../game";
 import NumberButton from "../comp/NumberButton";
 export interface AdminPanelState {
   changeMenu(menu: Panel): void;
@@ -110,59 +110,30 @@ function AP() {
   const game = useContext(GameContext);
   const admin = useContext(AdminContext);
 
-  const [str, setStr] = useState(0);
-  const [dex, setDex] = useState(0);
-  const [int, setInt] = useState(0);
-  const [def, setDef] = useState(0);
-  const [agi, setAgi] = useState(0);
+  const [elements, setElements] = useState<ElementMap<number>>({} as any);
 
-  let elementSum = str + dex + int + def + agi;
+  let elementSum = Object.values(elements).reduce((a, b) => a + b, 0);
 
   return (
     <>
       <h1>AP menu</h1>
-      <NumberButton
-        min={0}
-        max={admin.player.ap - elementSum + str}
-        baseValue={admin.player.stats.elements.earth}
-        css={"earth"}
-        onChange={setStr}
-      />
-      <NumberButton
-        min={0}
-        max={admin.player.ap - elementSum + dex}
-        baseValue={admin.player.stats.elements.thunder}
-        css={"thunder"}
-        onChange={setDex}
-      />
-      <NumberButton
-        min={0}
-        max={admin.player.ap - elementSum + int}
-        baseValue={admin.player.stats.elements.water}
-        css={"water"}
-        onChange={setInt}
-      />
-      <NumberButton
-        min={0}
-        max={admin.player.ap - elementSum + def}
-        baseValue={admin.player.stats.elements.fire}
-        css={"fire"}
-        onChange={setDef}
-      />
-      <NumberButton
-        min={0}
-        max={admin.player.ap - elementSum + agi}
-        baseValue={admin.player.stats.elements.air}
-        css={"air"}
-        onChange={setAgi}
-      />
+
+      <p>Remaning AP: {admin.player.ap - elementSum}</p>
+
+      {ALL_ELEMENTS.map(element => (
+        <NumberButton
+          min={0}
+          max={admin.player.ap - elementSum + elements[element]}
+          baseValue={admin.player.stats.elements.earth}
+          css={element}
+          onChange={(val) => { setElements({ ...elements, [element]: val }) }}
+        />
+      ))}
       <button
         onClick={() => {
-          admin.player.stats.elements.earth += str;
-          admin.player.stats.elements.thunder += dex;
-          admin.player.stats.elements.water += int;
-          admin.player.stats.elements.fire += def;
-          admin.player.stats.elements.air += agi;
+          ALL_ELEMENTS.forEach((element) => {
+            admin.player.stats.elements[element] += elements[element];
+          });
           admin.player.ap -= elementSum;
           game.update();
           admin.changeMenu(Panel.MainMenu);

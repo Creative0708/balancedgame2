@@ -2,6 +2,11 @@ import React, { type Context } from "react";
 
 export interface GameState {
   players: Player[];
+
+  // IGT in days
+  days: number,
+
+  update(): void,
 }
 
 export function initializeGame(): GameState {
@@ -49,6 +54,10 @@ export function initializeGame(): GameState {
 
   return {
     players: [player1, player2, player3],
+
+    days: null,
+
+    update: () => { },
   };
 }
 
@@ -78,6 +87,8 @@ export interface ElementMap<Value> {
   air: Value;
 }
 export type Element = keyof ElementMap<unknown>;
+
+export const ALL_ELEMENTS: Element[] = ["earth", "thunder", "water", "fire", "air"];
 
 export type KeysOfType<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
 
@@ -186,6 +197,6 @@ export interface Spell {
   elementsdmg: ElementMap<number>;
 }
 
-export const GameContext = React.createContext<GameState & { update(): void }>(
+export const GameContext = React.createContext<GameState>(
   null as any,
 );

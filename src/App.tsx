@@ -6,13 +6,13 @@ import { AdminPanel } from "./admin/AdminPanel";
 
 export default function App() {
   const [game, setGame] = useState(initializeGame());
-  const [dummy, dummyUpdate] = useState(0);
+
+  const [dummy, setDummy] = useState(0);
+  game.update = () => setDummy(dummy ^ 1);
+
   return (
     <GameContext.Provider
-      value={{
-        ...game,
-        update: () => dummyUpdate(dummy + 1),
-      }}
+      value={game}
     >
       <Background />
       <GameDisplay />

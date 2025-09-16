@@ -2,11 +2,13 @@ import { useContext } from "react";
 import { useState } from "react";
 import { GameContext, type Player } from ".";
 import { AdminPanel } from "../admin/AdminPanel";
+import { Clock } from "../comp/Clock";
 
 export function GameDisplay() {
   return (
     <div>
       <PlayerTable />
+      <Clock />
     </div>
   );
 }
