@@ -3,7 +3,7 @@ import "./clock.css";
 import { GameContext } from "../game";
 
 const GAME_START = new Date("Mon Sep 15 2025 00:00:00 GMT-0400");
-const SECONDS_RTA_PER_DAY_IGT = 60;
+const SECONDS_RTA_PER_DAY_IGT = 3600;
 
 export function Clock() {
   const game = useContext(GameContext);

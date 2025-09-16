@@ -4,9 +4,9 @@ export interface GameState {
   players: Player[];
 
   // IGT in days
-  days: number,
+  days: number;
 
-  update(): void,
+  update(): void;
 }
 
 export function initializeGame(): GameState {
@@ -20,9 +20,11 @@ export function initializeGame(): GameState {
       resourcelevel: 0,
       resourcexp: 0,
       stats: {
-        hp: 100,
+        hp: 1000,
+        maxhp: 1000,
         hpregen: 5,
         mana: 100,
+        maxmana: 100,
         manaregen: 1,
         stamina: 100,
         staminaregen: 5,
@@ -38,10 +40,8 @@ export function initializeGame(): GameState {
       inventory: [
         {
           name: "Basic Sword",
-          type: "weapon",
-          modifiers: [
-            { stat: "neutraldmg", type: "flat", value: 1 },
-          ],
+          type: "sword",
+          modifiers: [{ stat: "neutraldmg", type: "flat", value: 1 }],
         },
       ],
       spells: [],
@@ -57,7 +57,7 @@ export function initializeGame(): GameState {
 
     days: null,
 
-    update: () => { },
+    update: () => {},
   };
 }
 
@@ -88,29 +88,43 @@ export interface ElementMap<Value> {
 }
 export type Element = keyof ElementMap<unknown>;
 
-export const ALL_ELEMENTS: Element[] = ["earth", "thunder", "water", "fire", "air"];
+export const ALL_ELEMENTS: Element[] = [
+  "earth",
+  "thunder",
+  "water",
+  "fire",
+  "air",
+];
 
-export type KeysOfType<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
+export type KeysOfType<T, V> = {
+  [K in keyof T]: T[K] extends V ? K : never;
+}[keyof T];
 
-export type PlayerNumberStat = KeysOfType<PlayerStats, number>
-export type PlayerElementStat = KeysOfType<PlayerStats, ElementMap<any>>
+export type PlayerNumberStat = KeysOfType<PlayerStats, number>;
+export type PlayerElementStat = KeysOfType<PlayerStats, ElementMap<any>>;
 
-export type ObjectStatDescriptor = {
-  stat: PlayerNumberStat
-} | {
-  stat: PlayerElementStat,
-  element: Element,
-}
-export type StringStatDescriptor = PlayerNumberStat | `${PlayerElementStat}.${Element}`;
+export type ObjectStatDescriptor =
+  | {
+      stat: PlayerNumberStat;
+    }
+  | {
+      stat: PlayerElementStat;
+      element: Element;
+    };
+export type StringStatDescriptor =
+  | PlayerNumberStat
+  | `${PlayerElementStat}.${Element}`;
 
 export type Modifier = ObjectStatDescriptor & {
   type: "percentage" | "flat";
   value: number;
-}
+};
 
-function convertStatDescriptor(desc: StringStatDescriptor): ObjectStatDescriptor {
+function convertStatDescriptor(
+  desc: StringStatDescriptor
+): ObjectStatDescriptor {
   let [stat, element] = desc.split(".");
-  if(element) {
+  if (element) {
     // element stat; has a period
     return { stat: stat as PlayerElementStat, element: element as Element };
   } else {
@@ -119,7 +133,11 @@ function convertStatDescriptor(desc: StringStatDescriptor): ObjectStatDescriptor
   }
 }
 
-export function getModifiedStat(player: Player, d: StringStatDescriptor, modifiers: Modifier[]): number {
+export function getModifiedStat(
+  player: Player,
+  d: StringStatDescriptor,
+  modifiers: Modifier[]
+): number {
   const desc = convertStatDescriptor(d);
   let stat = getRawStat(player, desc);
 
@@ -132,37 +150,38 @@ export function getModifiedStat(player: Player, d: StringStatDescriptor, modifie
   });
 
   for (const modifier of modifiers) {
-    if(modifier.stat !== desc.stat || (modifier as any).element !== (desc as any).element)
+    if (
+      modifier.stat !== desc.stat ||
+      (modifier as any).element !== (desc as any).element
+    )
       continue;
 
-    if (modifier.type === "flat")
-      stat += modifier.value;
-    else if (modifier.type === "percentage")
-      stat *= 1 + modifier.value / 100;
+    if (modifier.type === "flat") stat += modifier.value;
+    else if (modifier.type === "percentage") stat *= 1 + modifier.value / 100;
   }
 
   return stat;
 }
 
 function getRawStat(player: Player, desc: ObjectStatDescriptor): number {
-  if ("element" in desc)
-    return player.stats[desc.stat][desc.element];
-  else
-    return player.stats[desc.stat];
+  if ("element" in desc) return player.stats[desc.stat][desc.element];
+  else return player.stats[desc.stat];
 }
-function setRawStat(player: Player, desc: ObjectStatDescriptor, value: number): number {
-  if ("element" in desc)
-    player.stats[desc.stat][desc.element] = value;
-  else
-    player.stats[desc.stat] = value;
+function setRawStat(player: Player, desc: ObjectStatDescriptor, value: number) {
+  if ("element" in desc) player.stats[desc.stat][desc.element] = value;
+  else player.stats[desc.stat] = value;
 }
 
 export interface PlayerStats {
   hp: number;
 
+  maxhp: number;
+
   hpregen: number;
 
   mana: number;
+
+  maxmana: number;
 
   manaregen: number;
 
@@ -197,6 +216,4 @@ export interface Spell {
   elementsdmg: ElementMap<number>;
 }
 
-export const GameContext = React.createContext<GameState>(
-  null as any,
-);
+export const GameContext = React.createContext<GameState>(null as any);

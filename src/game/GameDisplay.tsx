@@ -36,7 +36,9 @@ function PlayerTable() {
       <tbody>
         <TableRow
           title="❤️ Health"
-          value={(player) => player.stats.hp}
+          value={(player) =>
+            `${Math.round(player.stats.hp)}/${player.stats.maxhp}`
+          }
           className="hp"
         />
       </tbody>
@@ -50,7 +52,7 @@ function PlayerTable() {
       <tbody>
         <TableRow
           title="✷ Mana"
-          value={(player) => player.stats.mana}
+          value={(player) => `${player.stats.mana}/${player.stats.maxmana}`}
           className="mana"
         />
       </tbody>

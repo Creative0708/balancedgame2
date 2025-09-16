@@ -1,6 +1,14 @@
 import { createContext, useContext, useRef, useState } from "react";
 import "./admin.css";
-import { ALL_ELEMENTS, type ElementMap, GameContext, getModifiedStat, type GameState, type Item, type Player } from "../game";
+import {
+  ALL_ELEMENTS,
+  type ElementMap,
+  GameContext,
+  getModifiedStat,
+  type GameState,
+  type Item,
+  type Player,
+} from "../game";
 import NumberButton from "../comp/NumberButton";
 export interface AdminPanelState {
   changeMenu(menu: Panel): void;
@@ -110,7 +118,13 @@ function AP() {
   const game = useContext(GameContext);
   const admin = useContext(AdminContext);
 
-  const [elements, setElements] = useState<ElementMap<number>>({} as any);
+  const [elements, setElements] = useState<ElementMap<number>>({
+    earth: 0,
+    thunder: 0,
+    water: 0,
+    fire: 0,
+    air: 0,
+  });
 
   let elementSum = Object.values(elements).reduce((a, b) => a + b, 0);
 
@@ -120,13 +134,15 @@ function AP() {
 
       <p>Remaning AP: {admin.player.ap - elementSum}</p>
 
-      {ALL_ELEMENTS.map(element => (
+      {ALL_ELEMENTS.map((element) => (
         <NumberButton
           min={0}
           max={admin.player.ap - elementSum + elements[element]}
-          baseValue={admin.player.stats.elements.earth}
+          baseValue={admin.player.stats.elements[element]}
           css={element}
-          onChange={(val) => { setElements({ ...elements, [element]: val }) }}
+          onChange={(val) => {
+            setElements({ ...elements, [element]: val });
+          }}
         />
       ))}
       <button
@@ -168,9 +184,44 @@ function Attack() {
   const [weapon, setWeapon] = useState<Item>(null);
 
   function attack() {
-    let totalDamage = getModifiedStat(admin.player, "neutraldmg", weapon.modifiers);
-    victim.stats.hp -= totalDamage;
+    let strength = Math.min(70, admin.player.stats.elements.earth / 2);
+    let dexterity = Math.min(70, admin.player.stats.elements.thunder / 2);
+    let defence = Math.min(70, victim.stats.elements.fire / 2);
+    let agility = Math.min(70, victim.stats.elements.air / 2);
 
+    let totalDamage = 0;
+
+    let neutralDamage =
+      getModifiedStat(admin.player, "neutraldmg", weapon.modifiers) +
+      (weapon.type === "melee"
+        ? getModifiedStat(admin.player, "meleedmg", weapon.modifiers)
+        : getModifiedStat(admin.player, "rangeddmg", weapon.modifiers));
+
+    alert(neutralDamage);
+
+    totalDamage += Math.max(0, neutralDamage);
+
+    for (const element of ALL_ELEMENTS) {
+      let elementalDamage =
+        getModifiedStat(
+          admin.player,
+          `elementsdmg.${element}`,
+          weapon.modifiers
+        ) -
+        getModifiedStat(victim, `elementsdef.${element}`, weapon.modifiers) +
+        (weapon.type === "melee"
+          ? getModifiedStat(admin.player, "meleedmg", weapon.modifiers)
+          : getModifiedStat(admin.player, "rangeddmg", weapon.modifiers));
+
+      totalDamage += Math.max(0, elementalDamage);
+    }
+    let rng = Math.random() * 100 + 1;
+    totalDamage *=
+      (1 + (strength - defence) / 100) *
+      (rng < dexterity ? 2 : 1) *
+      (rng < agility ? 0.1 : 1);
+
+    victim.stats.hp -= totalDamage;
     game.update();
   }
 
@@ -179,34 +230,37 @@ function Attack() {
       {game.players
         .filter((player) => player !== admin.player)
         .map((player) => (
-          <button
-            key={player.name}
-            onClick={() => setVictim(player)}
-          >
+          <button key={player.name} onClick={() => setVictim(player)}>
             {player.name}
           </button>
         ))}
 
       <p>Currently selected player: {victim ? victim.name : "N/A"}</p>
 
-      {
-        !victim ? null :
+      {!victim ? null : (
         <div>
           <h2>Select a weapon.</h2>
-            {admin.player.inventory.filter((item) => item.type === "weapon").map((item: Item) => (
-              <button
-                key={item.name}
-                onClick={() => setWeapon(item)}
-              >{item.name}</button>
+          {admin.player.inventory
+            .filter((item) => item.type === "sword" || item.type === "bow")
+            .map((item: Item) => (
+              <button key={item.name} onClick={() => setWeapon(item)}>
+                {item.name}
+              </button>
             ))}
         </div>
-      }
-      {
-        !weapon ? null :
+      )}
+      {!weapon ? null : (
         <div>
-          <button onClick={() => attack()}>Attack!</button>
+          <button
+            onClick={() => {
+              attack();
+              admin.changeMenu(Panel.MainMenu);
+            }}
+          >
+            Attack!
+          </button>
         </div>
-      }
+      )}
       <button onClick={() => admin.changeMenu(Panel.MainMenu)}>Back</button>
     </>
   );
