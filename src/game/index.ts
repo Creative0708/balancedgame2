@@ -70,12 +70,6 @@ export interface Item {
   modifiers: Modifier[];
 }
 
-export interface Modifier {
-  stat: keyof PlayerStats;
-  type: "percentage" | "flat";
-  value: number;
-}
-
 export interface ElementMap<Value> {
   earth: Value;
   thunder: Value;
@@ -84,6 +78,73 @@ export interface ElementMap<Value> {
   air: Value;
 }
 export type Element = keyof ElementMap<unknown>;
+
+export type KeysOfType<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
+
+export type PlayerNumberStat = KeysOfType<PlayerStats, number>
+export type PlayerElementStat = KeysOfType<PlayerStats, ElementMap<any>>
+
+export type ObjectStatDescriptor = {
+  stat: PlayerNumberStat
+} | {
+  stat: PlayerElementStat,
+  element: Element,
+}
+export type StringStatDescriptor = PlayerNumberStat | `${PlayerElementStat}.${Element}`;
+
+export type Modifier = ObjectStatDescriptor & {
+  type: "percentage" | "flat";
+  value: number;
+}
+
+function convertStatDescriptor(desc: StringStatDescriptor): ObjectStatDescriptor {
+  let [stat, element] = desc.split(".");
+  if(element) {
+    // element stat; has a period
+    return { stat: stat as PlayerElementStat, element: element as Element };
+  } else {
+    // number stat; no period
+    return { stat: stat as PlayerNumberStat };
+  }
+}
+
+export function getModifiedStat(player: Player, d: StringStatDescriptor, modifiers: Modifier[]): number {
+  const desc = convertStatDescriptor(d);
+  let stat = getRawStat(player, desc);
+
+  // modifiers = modifiers.concat(player.armor.modifiers) TODO: implement
+
+  modifiers.sort((a, b) => {
+    let valueA = a.type === "flat" ? 0 : 1;
+    let valueB = b.type === "flat" ? 0 : 1;
+    return valueA - valueB;
+  });
+
+  for (const modifier of modifiers) {
+    if(modifier.stat !== desc.stat || (modifier as any).element !== (desc as any).element)
+      continue;
+
+    if (modifier.type === "flat")
+      stat += modifier.value;
+    else if (modifier.type === "percentage")
+      stat *= 1 + modifier.value / 100;
+  }
+
+  return stat;
+}
+
+function getRawStat(player: Player, desc: ObjectStatDescriptor): number {
+  if ("element" in desc)
+    return player.stats[desc.stat][desc.element];
+  else
+    return player.stats[desc.stat];
+}
+function setRawStat(player: Player, desc: ObjectStatDescriptor, value: number): number {
+  if ("element" in desc)
+    player.stats[desc.stat][desc.element] = value;
+  else
+    player.stats[desc.stat] = value;
+}
 
 export interface PlayerStats {
   hp: number;

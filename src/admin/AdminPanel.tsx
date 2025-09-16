@@ -1,6 +1,6 @@
 import { createContext, useContext, useRef, useState } from "react";
 import "./admin.css";
-import { GameContext, type GameState, type Item, type Player } from "../game";
+import { GameContext, getModifiedStat, type GameState, type Item, type Player } from "../game";
 import NumberButton from "../comp/NumberButton";
 export interface AdminPanelState {
   changeMenu(menu: Panel): void;
@@ -8,16 +8,6 @@ export interface AdminPanelState {
   playerIdx: number;
   player: Player;
   setPlayerIdx(p: number): void;
-
-  /**
-   * Placeholder location for certain variables and functions
-   */
-  victim: Player | null;
-  victimIdx: number;
-  setVictim(p: Player): void;
-  setVictimIdx(p: number): void;
-  weapon: Item;
-  setWeapon(p: Item): void;
 }
 
 export const AdminContext = createContext<AdminPanelState>(null as any);
@@ -29,8 +19,6 @@ enum Panel {
   Map,
   Attack,
   Shop,
-  WeaponSelector,
-  DamageCalculator,
 }
 
 export function AdminPanel() {
@@ -38,9 +26,6 @@ export function AdminPanel() {
   const [menu, setMenu] = useState(Panel.CharacterSelection);
 
   const [playerIdx, setPlayerIdx] = useState(0);
-  const [victim, setVictim] = useState(null);
-  const [victimIdx, setVictimIdx] = useState(-1);
-  const [weapon, setWeapon] = useState(null);
 
   const admin: AdminPanelState = {
     changeMenu: setMenu,
@@ -48,12 +33,6 @@ export function AdminPanel() {
     playerIdx,
     player: game.players[playerIdx],
     setPlayerIdx,
-    victim,
-    victimIdx,
-    setVictim,
-    setVictimIdx,
-    weapon,
-    setWeapon,
   };
 
   let screen;
@@ -72,12 +51,6 @@ export function AdminPanel() {
       break;
     case Panel.Attack:
       screen = <Attack />;
-      break;
-    case Panel.WeaponSelector:
-      screen = <WeaponSelector />;
-      break;
-    case Panel.DamageCalculator:
-      screen = <DamageCalculator />;
       break;
   }
 
@@ -148,11 +121,41 @@ function AP() {
   return (
     <>
       <h1>AP menu</h1>
-      <NumberButton min={0} max={admin.player.ap-elementSum+str} baseValue={admin.player.stats.elements.earth} css={"earth"} onChange={setStr} />
-      <NumberButton min={0} max={admin.player.ap-elementSum+dex} baseValue={admin.player.stats.elements.thunder} css={"thunder"} onChange={setDex} />
-      <NumberButton min={0} max={admin.player.ap-elementSum+int} baseValue={admin.player.stats.elements.water} css={"water"} onChange={setInt} />
-      <NumberButton min={0} max={admin.player.ap-elementSum+def} baseValue={admin.player.stats.elements.fire} css={"fire"} onChange={setDef} />
-      <NumberButton min={0} max={admin.player.ap-elementSum+agi} baseValue={admin.player.stats.elements.air} css={"air"} onChange={setAgi} />
+      <NumberButton
+        min={0}
+        max={admin.player.ap - elementSum + str}
+        baseValue={admin.player.stats.elements.earth}
+        css={"earth"}
+        onChange={setStr}
+      />
+      <NumberButton
+        min={0}
+        max={admin.player.ap - elementSum + dex}
+        baseValue={admin.player.stats.elements.thunder}
+        css={"thunder"}
+        onChange={setDex}
+      />
+      <NumberButton
+        min={0}
+        max={admin.player.ap - elementSum + int}
+        baseValue={admin.player.stats.elements.water}
+        css={"water"}
+        onChange={setInt}
+      />
+      <NumberButton
+        min={0}
+        max={admin.player.ap - elementSum + def}
+        baseValue={admin.player.stats.elements.fire}
+        css={"fire"}
+        onChange={setDef}
+      />
+      <NumberButton
+        min={0}
+        max={admin.player.ap - elementSum + agi}
+        baseValue={admin.player.stats.elements.air}
+        css={"air"}
+        onChange={setAgi}
+      />
       <button
         onClick={() => {
           admin.player.stats.elements.earth += str;
@@ -160,7 +163,7 @@ function AP() {
           admin.player.stats.elements.water += int;
           admin.player.stats.elements.fire += def;
           admin.player.stats.elements.air += agi;
-          admin.player.ap -= (elementSum);
+          admin.player.ap -= elementSum;
           game.update();
           admin.changeMenu(Panel.MainMenu);
         }}
@@ -181,9 +184,7 @@ function Map() {
       <h1>Placeholder</h1>
       <button onClick={() => admin.changeMenu(Panel.Attack)}>Attack</button>
       <br></br>
-      <button onClick={() => admin.changeMenu(Panel.MainMenu)}>
-        Back
-      </button>
+      <button onClick={() => admin.changeMenu(Panel.MainMenu)}>Back</button>
     </>
   );
 }
@@ -192,77 +193,50 @@ function Attack() {
   const game = useContext(GameContext);
   const admin = useContext(AdminContext);
 
-  return (
-    <>
-      {game.players.filter((player) => player !== admin.player).map((player: Player, playerId: number) => (
-        <button
-          key={player.name}
-          onClick={() => {
-            admin.setVictim(player);
-            admin.setVictimIdx(game.players.indexOf(player));
-            admin.changeMenu(Panel.WeaponSelector);
-          }}
-        >
-          {player.name}
-        </button>
-      ))}
-      <button onClick={() => admin.changeMenu(Panel.MainMenu)}>
-      Back
-      </button>
-    </>
-  );
-}
+  const [victim, setVictim] = useState<Player>(null);
+  const [weapon, setWeapon] = useState<Item>(null);
 
-function WeaponSelector() {
-  const game = useContext(GameContext);
-  const admin = useContext(AdminContext);
+  function attack() {
+    let totalDamage = getModifiedStat(admin.player, "neutraldmg", weapon.modifiers);
+    victim.stats.hp -= totalDamage;
 
-  return (
-    <>
-      <h2>Select a weapon.</h2>
-      {admin.player.inventory.filter((item) => item.type === "weapon").map((item: Item, itemId: number) => (
-        <button
-          key={item.name}
-          onClick={() => {
-            admin.setWeapon(item);
-            admin.changeMenu(Panel.DamageCalculator);
-          }}
-        >{item.name}</button>
-      ))}
-      <button onClick={() => admin.changeMenu(Panel.Attack)}>
-      Back
-      </button>
-    </>
-  );
-}
-
-function DamageCalculator() {
-  const game = useContext(GameContext);
-  const admin = useContext(AdminContext);
-
-  
-  for (const modifier of admin.weapon.modifiers) {
-    if (modifier.type === "flat") {
-      // @ts-ignore
-      admin.player.stats[modifier.stat] += modifier.value;
-    }
-    else if (modifier.type === "percentage") {
-      // @ts-ignore
-      admin.player.stats[modifier.stat] *= (1 + modifier.value / 100);
-    }
-    
+    game.update();
   }
 
-  admin.victim.stats.hp -= admin.player.stats.neutraldmg;
-
   return (
     <>
-      <button onClick={() => {
-        admin.changeMenu(Panel.MainMenu);
-        game.update();
-      }}>
-        Back
-      </button>
+      {game.players
+        .filter((player) => player !== admin.player)
+        .map((player) => (
+          <button
+            key={player.name}
+            onClick={() => setVictim(player)}
+          >
+            {player.name}
+          </button>
+        ))}
+
+      <p>Currently selected player: {victim ? victim.name : "N/A"}</p>
+
+      {
+        !victim ? null :
+        <div>
+          <h2>Select a weapon.</h2>
+            {admin.player.inventory.filter((item) => item.type === "weapon").map((item: Item) => (
+              <button
+                key={item.name}
+                onClick={() => setWeapon(item)}
+              >{item.name}</button>
+            ))}
+        </div>
+      }
+      {
+        !weapon ? null :
+        <div>
+          <button onClick={() => attack()}>Attack!</button>
+        </div>
+      }
+      <button onClick={() => admin.changeMenu(Panel.MainMenu)}>Back</button>
     </>
   );
 }
