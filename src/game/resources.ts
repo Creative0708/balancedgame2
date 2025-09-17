@@ -4,7 +4,6 @@ export const RESOURCES = {
   "Copper Ingot": {
     rarity: "common",
     type: "material",
-    modifiers: [{ stat: "neutraldmg", type: "flat", value: 1 }],
   },
   "Tree Bark": {
     rarity: "uncommon",

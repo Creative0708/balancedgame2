@@ -51,7 +51,7 @@ export function initializeGame(): GameState {
       items: [
         {
           name: "Basic Sword",
-          type: "weapon",
+          type: "sword",
           modifiers: [{ stat: "neutraldmg", type: "flat", value: 1 }],
         },
       ],
