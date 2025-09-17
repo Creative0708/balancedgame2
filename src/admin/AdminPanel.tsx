@@ -230,7 +230,23 @@ function Attack() {
       (rng < agility ? 0.1 : 1);
 
     victim.stats.hp -= totalDamage;
+    admin.player.combatxp += totalDamage;
+    if (admin.player.combatxp >= admin.player.combatnextlevelxp) {
+      levelUp();
+    }
     game.update();
+  }
+
+  function levelUp() {
+    let levelups = 0;
+    while (admin.player.combatxp >= admin.player.combatnextlevelxp) {
+      admin.player.ap += 2;
+      admin.player.combatxp -= admin.player.combatnextlevelxp;
+      admin.player.combatlevel++;
+      admin.player.combatnextlevelxp += 100 * (admin.player.combatlevel / 2);
+      levelups++;
+    }
+    alert("You have levelled up! +"+(levelups*2)+" AP");
   }
 
   return (

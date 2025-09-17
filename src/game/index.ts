@@ -26,10 +26,13 @@ export function initializeGame(): GameState {
       name,
       ap,
 
+      coins: 0,
       combatlevel: 0,
       combatxp: 0,
+      combatnextlevelxp: 100,
       resourcelevel: 0,
       resourcexp: 0,
+      resourcenextlevelxp: 100,
       stats: {
         hp: 1000,
         maxhp: 1000,
@@ -52,11 +55,11 @@ export function initializeGame(): GameState {
         {
           name: "Basic Sword",
           type: "sword",
-          modifiers: [{ stat: "neutraldmg", type: "flat", value: 1 }],
+          modifiers: [{ stat: "neutraldmg", type: "flat", value: 1000 }],
         },
       ],
       resources: {
-        "Copper Ingot": 32,
+        "Copper Bar": 32,
         "Tree Bark": 2,
         "Divine Orb": 1,
       },
@@ -80,10 +83,13 @@ export function initializeGame(): GameState {
 export interface Player {
   name: string;
   ap: number;
+  coins: number;
   combatlevel: number;
   combatxp: number;
+  combatnextlevelxp: number;
   resourcelevel: number;
   resourcexp: number;
+  resourcenextlevelxp: number;
   stats: PlayerStats;
   items: Item[];
   resources: { [key in Resource]?: number };

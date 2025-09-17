@@ -29,7 +29,7 @@ function PlayerTable() {
       <tbody>
         <TableRow
           title="✷ Level"
-          value={(player) => `${player.combatlevel} [${player.combatxp}/100]`}
+          value={(player) => `${player.combatlevel} [${player.combatxp}/${player.combatnextlevelxp}]`}
           className="lvl"
         />
       </tbody>
