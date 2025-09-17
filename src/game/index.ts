@@ -44,6 +44,7 @@ export function initializeGame(): GameState {
           modifiers: [{ stat: "neutraldmg", type: "flat", value: 1 }],
         },
       ],
+      resources: null,
       spells: [],
     };
   }
@@ -70,6 +71,7 @@ export interface Player {
   resourcexp: number;
   stats: PlayerStats;
   inventory: Item[];
+  resources: Map<string, Modifier[]>;
   spells: Spell[];
 }
 

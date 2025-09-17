@@ -13,7 +13,7 @@ export function Clock() {
   const day = game.days;
   const integerDay = Math.floor(day);
   const hour = (day - integerDay) * 24;
-  const minute = ((day - integerDay) * 24 % 1) * 60;
+  const minute = (((day - integerDay) * 24) % 1) * 60;
 
   function updateClock() {
     const now = new Date();
@@ -21,7 +21,7 @@ export function Clock() {
     game.days = milliseconds / 1000 / SECONDS_RTA_PER_DAY_IGT;
     game.update();
 
-    timeout.current = setTimeout(updateClock, 1000 - now.getTime() % 1000);
+    timeout.current = setTimeout(updateClock, 1000 - (now.getTime() % 1000));
   }
 
   useEffect(() => {
@@ -29,14 +29,26 @@ export function Clock() {
     return () => timeout.current && clearTimeout(timeout.current);
   }, []);
 
-  return <div id="clock-container">
-    <div>
-      <h1>Day {integerDay}</h1>
-      <p className="time-display">{Math.floor(hour).toString().padStart(2, "0")}<span className="blink">:</span>{Math.floor(minute).toString().padStart(2, "0")}</p>
-      <div className="clock-display">
-        <div className="hour-hand" style={{ rotate: hour / 12 * 360 + "deg" }}></div>
-        <div className="minute-hand" style={{ rotate: minute / 60 * 360 + "deg" }}></div>
+  return (
+    <div id="clock-container">
+      <div>
+        <h1>Day {integerDay}</h1>
+        <p className="time-display">
+          {Math.floor(hour).toString().padStart(2, "0")}
+          <span className="blink">:</span>
+          {Math.floor(minute).toString().padStart(2, "0")}
+        </p>
+        <div className="clock-display">
+          <div
+            className="hour-hand"
+            style={{ rotate: (hour / 12) * 360 + "deg" }}
+          ></div>
+          <div
+            className="minute-hand"
+            style={{ rotate: (minute / 60) * 360 + "deg" }}
+          ></div>
+        </div>
       </div>
     </div>
-  </div>
+  );
 }

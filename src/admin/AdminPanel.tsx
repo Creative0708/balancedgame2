@@ -26,6 +26,7 @@ enum Panel {
   AP,
   Map,
   Attack,
+  Crafting,
   Shop,
 }
 
@@ -59,6 +60,9 @@ export function AdminPanel() {
       break;
     case Panel.Attack:
       screen = <Attack />;
+      break;
+    case Panel.Crafting:
+      screen = <Crafting />;
       break;
   }
 
@@ -103,7 +107,7 @@ function MainMenu() {
       <h1>Welcome to the Admin Panel! You are {admin.player.name}</h1>
       <button onClick={() => admin.changeMenu(Panel.AP)}>AP</button>
       <button onClick={() => admin.changeMenu(Panel.Map)}>Map</button>
-      <button onClick={() => {}}>Crafting</button>
+      <button onClick={() => admin.changeMenu(Panel.Crafting)}>Crafting</button>
       <button onClick={() => {}}>Shop</button>
       <button onClick={() => {}}>Game Info</button>
       <br></br>
@@ -197,8 +201,6 @@ function Attack() {
         ? getModifiedStat(admin.player, "meleedmg", weapon.modifiers)
         : getModifiedStat(admin.player, "rangeddmg", weapon.modifiers));
 
-    alert(neutralDamage);
-
     totalDamage += Math.max(0, neutralDamage);
 
     for (const element of ALL_ELEMENTS) {
@@ -262,6 +264,45 @@ function Attack() {
         </div>
       )}
       <button onClick={() => admin.changeMenu(Panel.MainMenu)}>Back</button>
+    </>
+  );
+}
+
+function Crafting() {
+  const game = useContext(GameContext);
+  const admin = useContext(AdminContext);
+
+  const [craftingType, setCraftingType] = useState<string>(null);
+
+  return (
+    <>
+      {
+        <div>
+          <button onClick={() => setCraftingType("weapon")}>
+            Weapon Crafting
+          </button>
+          <button onClick={() => setCraftingType("spell")}>
+            Spell Crafting
+          </button>
+          <button onClick={() => setCraftingType("armour")}>
+            Armour Crafting
+          </button>
+        </div>
+      }
+      {craftingType !== "weapon" ? null : (
+        <div>
+          <h2>Your ingredients:</h2>
+          {admin.player.inventory
+            .filter(
+              (item) => item.type === "material" || item.type === "ingredient"
+            )
+            .map((item: Item) => (
+              <button key={item.name} onClick={() => {}}>
+                {item.name}
+              </button>
+            ))}
+        </div>
+      )}
     </>
   );
 }
