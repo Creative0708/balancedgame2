@@ -1,124 +1,148 @@
 .primary {
-    color: #34faf4;
+  color: #34faf4;
 }
 
 .secondary {
-    color: #60da93;
+  color: #60da93;
 }
 
 .tertiary {
-    color: #3493fa;
+  color: #3493fa;
 }
 
 .bad {
-    color: #ff7575;
+  color: #ff7575;
 }
 
 .hp,
 .heal,
 .hpregen {
-    color: #ff7070;
+  color: #ff7070;
 }
 
 .modifier {
-    color: #fa9302;
+  color: #fa9302;
 }
 
 .lvl {
-    color: #f09cff;
+  color: #f09cff;
 }
 
 .ap {
-    color: #62ff00;
+  color: #62ff00;
 }
 
 .mana {
-    color: #2efff2;
+  color: #2efff2;
 }
 
 .manarg {
-    color: #1fd1ea;
+  color: #1fd1ea;
 }
 
 .neutral {
-    color: #ffb000;
+  color: #ffb000;
 }
 
 .earth {
-    color: #60d318;
+  color: #60d318;
 }
 
 .thunder {
-    color: #ffd000;
+  color: #ffd000;
 }
 
 .water {
-    color: #00ffff;
+  color: #00ffff;
 }
 
 .fire {
-    color: #ff5330;
+  color: #ff5330;
 }
 
 .air {
-    color: #d9dde2;
+  color: #d9dde2;
 }
 
 .misc {
-    color: #ff65ff;
+  color: #ff65ff;
 }
 
 .inactive {
-    color: #9a9a9a !important;
+  color: #9a9a9a !important;
 }
 
 .slight-inactive {
-    color: #d6d6d6;
+  color: #d6d6d6;
 }
 
 .newline {
-    height: 0.3rem;
+  height: 0.3rem;
 }
 
 .stamina {
-    color: #00fd7f;
+  color: #00fd7f;
 }
 
 .staminaregen {
-    color: #29f0a7;
+  color: #29f0a7;
+}
+
+.common {
+  color: #aaa;
+}
+
+.uncommon {
+  color: #08fc6a;
+}
+
+.rare {
+  color: #475aff;
+}
+
+.epic {
+  color: #a047ff;
+}
+
+.legendary {
+  color: #ffa412;
+}
+
+.mythic {
+  color: #fc0303;
 }
 
 input[type="checkbox"] {
-    display: inline-grid;
-    place-content: center;
+  display: inline-grid;
+  place-content: center;
 
-    appearance: none;
-    background-color: transparent;
-    margin: 0;
-    font: inherit;
-    color: currentColor;
-    width: 1.1em;
-    height: 1.1em;
-    border: 0.1em solid #e0aaffa0;
-    border-radius: 0.15em;
-    transform: translateY(-0.075em);
+  appearance: none;
+  background-color: transparent;
+  margin: 0;
+  font: inherit;
+  color: currentColor;
+  width: 1.1em;
+  height: 1.1em;
+  border: 0.1em solid #e0aaffa0;
+  border-radius: 0.15em;
+  transform: translateY(-0.075em);
 
-    margin-right: 0.4em;
+  margin-right: 0.4em;
 
-    cursor: pointer;
+  cursor: pointer;
 }
 
 input[type="checkbox"]::before {
-    content: "";
-    width: 0.65em;
-    height: 0.65em;
-    visibility: hidden;
-    box-shadow: inset 1em 1em #fff;
+  content: "";
+  width: 0.65em;
+  height: 0.65em;
+  visibility: hidden;
+  box-shadow: inset 1em 1em #fff;
 
-    transform-origin: bottom left;
-    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  transform-origin: bottom left;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
 }
 
 input[type="checkbox"]:checked::before {
-    visibility: visible;
+  visibility: visible;
 }

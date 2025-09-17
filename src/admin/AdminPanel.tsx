@@ -1,5 +1,6 @@
 import { createContext, useContext, useRef, useState } from "react";
 import "./admin.css";
+import { RESOURCES } from "../game/resources";
 import {
   ALL_ELEMENTS,
   type ElementMap,
@@ -65,6 +66,9 @@ export function AdminPanel() {
     case Panel.Crafting:
       screen = <Crafting />;
       break;
+    case Panel.Shop:
+      screen = <Shop />;
+      break;
   }
 
   return (
@@ -109,7 +113,7 @@ function MainMenu() {
       <button onClick={() => admin.changeMenu(Panel.AP)}>AP</button>
       <button onClick={() => admin.changeMenu(Panel.Map)}>Map</button>
       <button onClick={() => admin.changeMenu(Panel.Crafting)}>Crafting</button>
-      <button onClick={() => {}}>Shop</button>
+      <button onClick={() => admin.changeMenu(Panel.Shop)}>Shop</button>
       <button onClick={() => {}}>Game Info</button>
       <br></br>
       <button onClick={() => admin.changeMenu(Panel.CharacterSelection)}>
@@ -210,7 +214,7 @@ function Attack() {
         getModifiedStat(
           admin.player,
           `elementsdmg.${element}`,
-          weapon.modifiers,
+          weapon.modifiers
         ) -
         getModifiedStat(victim, `elementsdef.${element}`, weapon.modifiers) +
         (weapon.type === "melee"
@@ -276,6 +280,10 @@ function Crafting() {
 
   const [craftingType, setCraftingType] = useState<string>(null);
 
+  function setValue(string, value) {
+    admin.player.resources[string] = value;
+  }
+
   return (
     <>
       {
@@ -291,20 +299,87 @@ function Crafting() {
           </button>
         </div>
       }
-      {craftingType !== "weapon" ? null : (
+      {craftingType === "spell" ? null : (
         <div>
-          <h2>Your ingredients:</h2>
-          {admin.player.items
+          <h2>Your materials:</h2>
+          {Object.keys(admin.player.resources)
             .filter(
-              (item) => item.type === "material" || item.type === "ingredient",
+              (resourceType) => RESOURCES[resourceType].type === "material"
             )
-            .map((item: Item) => (
-              <button key={item.name} onClick={() => {}}>
-                {item.name}
+            .map((resourceType) => (
+              <button
+                className={RESOURCES[resourceType].rarity}
+                onClick={() =>
+                  setValue(
+                    resourceType,
+                    Math.max(0, admin.player.resources[resourceType] - 1)
+                  )
+                }
+              >
+                {admin.player.resources[resourceType]}x {resourceType}
+              </button>
+            ))}
+          <h2>Your ingredients:</h2>
+          {Object.keys(admin.player.resources)
+            .filter(
+              (resourceType) => RESOURCES[resourceType].type === "ingredient"
+            )
+            .map((resourceType) => (
+              <button
+                className={RESOURCES[resourceType].rarity}
+                onClick={() =>
+                  setValue(
+                    resourceType,
+                    Math.max(0, admin.player.resources[resourceType] - 1)
+                  )
+                }
+              >
+                {admin.player.resources[resourceType]}x {resourceType}
+              </button>
+            ))}
+          <h3>Select items to continue:</h3>
+        </div>
+      )}
+      <button onClick={() => admin.changeMenu(Panel.MainMenu)}>Back</button>
+    </>
+  );
+}
+
+function Shop() {
+  const game = useContext(GameContext);
+  const admin = useContext(AdminContext);
+
+  const [shopMenu, setShopMenu] = useState<string>(null);
+
+  return (
+    <>
+      {
+        <div>
+          <h2>Select a shop category.</h2>
+          <h3>
+            New items appear in the shop in: [time]. Permanent items are in
+            cyan.
+          </h3>
+          <button onClick={() => setShopMenu("spell")}>Spell Scrolls</button>
+          <button onClick={() => setShopMenu("biome")}>Rotating Items</button>
+          <button onClick={() => setShopMenu("exclusive")}>
+            Exclusive Items!
+          </button>
+        </div>
+      }
+      {shopMenu !== "spell" ? null : (
+        <div>
+          <h2>Scrolls available:</h2>
+          {Object.keys(RESOURCES)
+            .filter((resourceType) => RESOURCES[resourceType].type === "scroll")
+            .map((resourceType) => (
+              <button className={RESOURCES[resourceType].rarity}>
+                {resourceType}
               </button>
             ))}
         </div>
       )}
+      <button onClick={() => admin.changeMenu(Panel.MainMenu)}>Back</button>
     </>
   );
 }

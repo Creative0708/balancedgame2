@@ -2,7 +2,13 @@ import React, { type Context } from "react";
 import { RESOURCES } from "./resources";
 export { RESOURCES };
 
-export type Rarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
+export type Rarity =
+  | "common"
+  | "uncommon"
+  | "rare"
+  | "epic"
+  | "legendary"
+  | "mythic";
 export type Resource = keyof typeof RESOURCES;
 
 export interface GameState {
@@ -50,8 +56,9 @@ export function initializeGame(): GameState {
         },
       ],
       resources: {
-        oak_plank: 32,
-        blaze_rod: 2,
+        "Copper Ingot": 32,
+        "Tree Bark": 2,
+        "Divine Orb": 1,
       },
       spells: [],
     };
@@ -126,7 +133,7 @@ export type Modifier = {
 export function getModifiedStat(
   player: Player,
   stat: StatDescriptor,
-  modifiers: Modifier[] = [],
+  modifiers: Modifier[] = []
 ): number {
   let value = getRawStat(player, stat);
 

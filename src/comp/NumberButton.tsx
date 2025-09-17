@@ -29,7 +29,7 @@ export default function NumberButton({
     if (e.shiftKey) change *= 5;
 
     let newValue = value + change;
-    if (newValue+baseValue < min) newValue = min-baseValue;
+    if (newValue + baseValue < min) newValue = min - baseValue;
     if (newValue > max) newValue = max;
 
     setValue(newValue);
@@ -38,7 +38,7 @@ export default function NumberButton({
 
   return (
     <button onClick={onClick} onContextMenu={onClick} className={css}>
-      {baseValue+value}
+      {baseValue + value}
     </button>
   );
 }
