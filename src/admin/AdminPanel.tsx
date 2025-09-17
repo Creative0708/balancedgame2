@@ -10,6 +10,7 @@ import {
   type Player,
 } from "../game";
 import NumberButton from "../comp/NumberButton";
+
 export interface AdminPanelState {
   changeMenu(menu: Panel): void;
 
@@ -190,6 +191,7 @@ function Attack() {
   function attack() {
     let strength = Math.min(70, admin.player.stats.elements.earth / 2);
     let dexterity = Math.min(70, admin.player.stats.elements.thunder / 2);
+
     let defence = Math.min(70, victim.stats.elements.fire / 2);
     let agility = Math.min(70, victim.stats.elements.air / 2);
 
@@ -208,7 +210,7 @@ function Attack() {
         getModifiedStat(
           admin.player,
           `elementsdmg.${element}`,
-          weapon.modifiers
+          weapon.modifiers,
         ) -
         getModifiedStat(victim, `elementsdef.${element}`, weapon.modifiers) +
         (weapon.type === "melee"
@@ -242,7 +244,7 @@ function Attack() {
       {!victim ? null : (
         <div>
           <h2>Select a weapon.</h2>
-          {admin.player.inventory
+          {admin.player.items
             .filter((item) => item.type === "sword" || item.type === "bow")
             .map((item: Item) => (
               <button key={item.name} onClick={() => setWeapon(item)}>
@@ -292,9 +294,9 @@ function Crafting() {
       {craftingType !== "weapon" ? null : (
         <div>
           <h2>Your ingredients:</h2>
-          {admin.player.inventory
+          {admin.player.items
             .filter(
-              (item) => item.type === "material" || item.type === "ingredient"
+              (item) => item.type === "material" || item.type === "ingredient",
             )
             .map((item: Item) => (
               <button key={item.name} onClick={() => {}}>
